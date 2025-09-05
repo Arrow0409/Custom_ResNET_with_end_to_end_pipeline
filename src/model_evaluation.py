@@ -4,6 +4,7 @@ import os
 import logging
 import tensorflow as tf
 import json
+import yaml
 
 logs_dir = "logs"
 os.makedirs(logs_dir, exist_ok=True)
@@ -24,6 +25,27 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
+
+def load_params(config_path: str) -> dict:
+    """
+    Load parameters from a YAML configuration file.
+    :param config_path: Path to the YAML configuration file
+    :return: Dictionary of parameters
+    """
+    try:
+        with open(config_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug(f"Parameters loaded from {config_path}")
+        return params
+    except FileNotFoundError:
+        logger.error(f"Configuration file not found: {config_path}")
+        raise
+    except yaml.YAMLError as e:
+        logger.error(f"Error parsing YAML file: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading parameters from {config_path}: {e}")
+        raise
 
 def load_saved_dataset(load_path: str) ->tf.data.Dataset:
     """Load a saved TensorFlow dataset from disk
@@ -135,7 +157,10 @@ def save_metrics(metrics: dict, file_path: str) ->None:
 def main() ->None:
     try:
         # Paths
-        best = True
+        params = load_params(config_path="params.yaml")['model_evaluation']
+        best = params["best"]
+        
+        #best = True
 
         if best:
             model_path = "models/resnet18_best_model.keras"
@@ -153,7 +178,7 @@ def main() ->None:
         
         # Calculate metrics
         metrics = calculate_metrics(true_labels, predicted_labels)
-        
+
         save_metrics(metrics, file_path="reports/metrics.json")
     except Exception as e:
         logger.error(f"Error in main evaluation process: {e}")

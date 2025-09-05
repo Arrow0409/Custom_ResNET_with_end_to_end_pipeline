@@ -190,7 +190,7 @@ def main():
     try:
         os.makedirs("data", exist_ok=True)
         download_eurosat()
-        data_dir, label_map_path, train_csv_path, test_csv_path, validation_csv_path = assign_eurosat_paths()
+        data_dir, label_map_path, train_csv_path, test_csv_path, validation_csv_path = assign_eurosat_paths(base_path="EuroSAT")
         label_map, train_df, test_df, validation_df = load_eurosat_dataframes(label_map_path, train_csv_path, test_csv_path, validation_csv_path)
         
         save_image_folders(src_dir=data_dir, dst_dir="data/raw/images")

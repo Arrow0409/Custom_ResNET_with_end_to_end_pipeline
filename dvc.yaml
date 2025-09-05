@@ -1,0 +1,49 @@
+stages:
+  data-ingestion:
+    cmd: python src/data_ingestion.py
+    deps:
+    - src/data_ingestion.py
+    outs:
+    - data/raw
+  Pre-processing:
+    cmd: python src/Pre-processing.py
+    deps:
+    - src/Pre-processing.py
+    - data/raw
+    params:
+    - Pre-processing.batch_size
+    - Pre-processing.shuffle
+    - Pre-processing.buffer
+    - Pre-processing.augment
+    - Pre-processing.flip
+    - Pre-processing.rotate
+    - Pre-processing.brightness
+    - Pre-processing.contrast
+    outs:
+    - data/processed
+  model_building:
+    cmd: python src/model_building.py
+    deps:
+    - src/model_building.py
+  model_training:
+    cmd: python src/model_training.py
+    deps:
+    - src/model_training.py
+    - data/processed
+    - src/model_building.py
+    params:
+    - model_training.num_classes
+    - model_training.epochs
+    - model_training.learning_rate
+    outs:
+    - models
+  model_evaluation:
+    cmd: python src/model_evaluation.py
+    deps:
+    - src/model_training.py
+    - data/processed
+    - models
+    params:
+    - model_evaluation.best
+    outs:
+    - reports

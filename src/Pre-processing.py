@@ -4,6 +4,7 @@ import numpy as np
 import os
 import logging
 from typing import Tuple
+import yaml
 
 logs_dir = "logs"
 os.makedirs(logs_dir, exist_ok=True)
@@ -24,6 +25,27 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
+
+def load_params(config_path: str) -> dict:
+    """
+    Load parameters from a YAML configuration file.
+    :param config_path: Path to the YAML configuration file
+    :return: Dictionary of parameters
+    """
+    try:
+        with open(config_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug(f"Parameters loaded from {config_path}")
+        return params
+    except FileNotFoundError:
+        logger.error(f"Configuration file not found: {config_path}")
+        raise
+    except yaml.YAMLError as e:
+        logger.error(f"Error parsing YAML file: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading parameters from {config_path}: {e}")
+        raise
 
 def load_and_preprocess_image(filepath: str, label: str, img_size: Tuple[int, int] = (64, 64)) -> Tuple[tf.Tensor, str]:
     """
@@ -136,7 +158,18 @@ def save_dataset(dataset: tf.data.Dataset, save_path: str = "data/train_dataset"
     
 def main() -> None:
         try:
-            IMG_SIZE=(64, 64)
+            params = load_params(config_path="params.yaml")
+            BATCH_SIZE=params['Pre-processing']['batch_size']
+            SHUFFLE=params['Pre-processing']['shuffle']
+            BUFFER_SIZE=params['Pre-processing']['buffer']
+            AUGMENT=params['Pre-processing']['augment']
+            FLIP=params['Pre-processing']['flip']
+            ROTATE=params['Pre-processing']['rotate']
+            BRIGHTNESS=params['Pre-processing']['brightness']
+            CONTRAST=params['Pre-processing']['contrast']
+
+            """
+            IMG_SIZE = (64, 64)
             BATCH_SIZE=32
             SHUFFLE=True
             BUFFER_SIZE=1000
@@ -145,6 +178,8 @@ def main() -> None:
             ROTATE=True
             BRIGHTNESS=True
             CONTRAST=True
+            
+            """
 
 
             #Loading dataframes
@@ -159,7 +194,7 @@ def main() -> None:
                                                            batch_size=BATCH_SIZE, 
                                                            shuffle=SHUFFLE, 
                                                            buffer_size=BUFFER_SIZE, 
-                                                           img_size=IMG_SIZE, 
+                                                           img_size=(64, 64), 
                                                            augment=AUGMENT, 
                                                            flip=FLIP, 
                                                            rotate=ROTATE, 
@@ -170,14 +205,14 @@ def main() -> None:
                                                                 batch_size=BATCH_SIZE, 
                                                                 shuffle=False, 
                                                                 buffer_size=BUFFER_SIZE, 
-                                                                img_size=IMG_SIZE, 
+                                                                img_size=(64, 64), 
                                                                 augment=False)
             
             test_dataset = create_tf_dataset_and_optimize(test_df, 
                                                           batch_size=BATCH_SIZE, 
                                                           shuffle=False, 
                                                           buffer_size=BUFFER_SIZE, 
-                                                          img_size=IMG_SIZE, 
+                                                          img_size=(64, 64), 
                                                           augment=False)
             # Saving datasets
             save_dataset(train_dataset, save_path="data/processed/train_dataset")

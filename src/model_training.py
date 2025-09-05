@@ -4,6 +4,7 @@ import logging
 from tensorflow.keras import Model
 from model_building import ResNet18
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+import yaml
 
 logs_dir = "logs"
 os.makedirs(logs_dir, exist_ok=True)
@@ -24,6 +25,28 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
+
+def load_params(config_path: str) -> dict:
+    """
+    Load parameters from a YAML configuration file.
+    :param config_path: Path to the YAML configuration file
+    :return: Dictionary of parameters
+    """
+    try:
+        with open(config_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug(f"Parameters loaded from {config_path}")
+        return params
+    except FileNotFoundError:
+        logger.error(f"Configuration file not found: {config_path}")
+        raise
+    except yaml.YAMLError as e:
+        logger.error(f"Error parsing YAML file: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error loading parameters from {config_path}: {e}")
+        raise
+
 
 def load_saved_dataset(load_path: str) ->tf.data.Dataset:
     """Load a saved TensorFlow dataset from disk
@@ -118,18 +141,24 @@ def save_trained_model(model, model_save_path:str)->None:
         raise
 
 
-def main() ->None:
+def main() -> None:
     try:
-        INPUT_SHAPE = (64, 64, 3)
-        NUM_CLASSES = 10
-        params = {"epochs": 20, "learning_rate": 0.001}
+        params = load_params(config_path="params.yaml")['model_training']
+        NUM_CLASSES = params['num_classes']
 
+        """
+            INPUT_SHAPE = (64, 64, 3)
+            NUM_CLASSES = 10
+            epochs = 20
+            learning_rate = 0.001
+
+        """
         # Load datasets
         train_dataset = load_saved_dataset(load_path="data/processed/train_dataset")
         val_dataset = load_saved_dataset(load_path="data/processed/validation_dataset")
         
         # Build model
-        model = ResNet18(input_shape=INPUT_SHAPE, num_classes=NUM_CLASSES)
+        model = ResNet18(input_shape=(64, 64, 3), num_classes=params['num_classes'])
         logger.info("ResNet-18 model built successfully.")
         
         # Train model
