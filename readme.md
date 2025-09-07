@@ -26,24 +26,40 @@ For detailed visualizations, plots, training curves, and data exploration:
 
 ---
 
-## 🗂️ Repository Structure
+## 📂 Repository Structure
 ```
+├── .dvc/
 ├── data/
-│   ├── raw/          # CSVs, label map, raw images
-│   └── processed/    # Preprocessed tf.data datasets
-├── models/           # Trained Keras models (.keras)
-├── reports/          # Evaluation metrics (metrics.json)
-├── dvclive/          # DVCLive experiment logs
-├── experiments/      # Jupyter notebooks
-├── src/              # Pipeline scripts
+│   ├── processed/
+│   │   ├── test_dataset/
+│   │   ├── train_dataset/
+│   │   └── validation_dataset/
+│   └── raw/
+├── dvclive/
+│   └── plots/
+│       ├── metrics.json
+│       └── params.yaml
+├── experiments/
+│   └── EuroSAT_custom_resnet.ipynb
+├── logs/
+├── models/
+│   ├── resnet18_best_model.keras
+│   └── resnet18_final_model.keras
+├── reports/
+│   └── metrics.json
+├── src/
+│   ├── __pycache__/
 │   ├── data_ingestion.py
-│   ├── Pre-processing.py
 │   ├── model_building.py
+│   ├── model_evaluation.py
 │   ├── model_training.py
-│   └── model_evaluation.py
-├── logs/             # Logs for each stage
-├── dvc.yaml          # DVC pipeline configuration
-└── params.yaml       # Hyperparameters and settings
+│   └── Pre-processing.py
+├── .dvcignore
+├── .gitignore
+├── dvc.lock
+├── dvc.yaml
+├── params.yaml
+└── README.md
 ```
 
 ---
@@ -161,20 +177,6 @@ python src/model_evaluation.py
 
 ---
 
-## 📜 License
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-## 📖 Citation
-```bibtex
-@misc{eurosat-resnet18-dvc,
-  title={EuroSAT ResNet-18 DVC Pipeline},
-  author={Your Name},
-  year={2025},
-  howpublished={https://github.com/your-username/your-repo}
-}
-```
 
 ---
 
