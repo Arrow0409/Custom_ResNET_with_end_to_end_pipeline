@@ -1,0 +1,13 @@
+Pre-processing:
+  batch_size: 32
+  shuffle: true
+  buffer: 1000
+  augment: true
+  flip: true
+  rotate: true
+  brightness: true
+  contrast: true
+model_training:
+  num_classes: 10
+  epochs: 20
+  learning_rate: 0.001

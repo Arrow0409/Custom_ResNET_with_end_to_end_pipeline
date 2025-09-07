@@ -21,6 +21,10 @@ stages:
       md5: 67f1766f456e4ff5b93fadd4c26cd52b.dir
       size: 94387594
       nfiles: 27004
+    - path: params.yaml
+      hash: md5
+      md5: 9195a5b672f8ef2bcb13159502f9e8ad
+      size: 250
     - path: src/Pre-processing.py
       hash: md5
       md5: 9cda4617d7ecaf787469a151dcfe5025
@@ -38,8 +42,8 @@ stages:
     outs:
     - path: data/processed
       hash: md5
-      md5: d9ff2831efcb3de083ddcf8726c85b1a.dir
-      size: 1327376918
+      md5: 9b0003117a340b3b71f82afdb88be54b.dir
+      size: 1327376917
       nfiles: 9
   model_building:
     cmd: python src/model_building.py
@@ -53,9 +57,13 @@ stages:
     deps:
     - path: data/processed
       hash: md5
-      md5: d9ff2831efcb3de083ddcf8726c85b1a.dir
-      size: 1327376918
+      md5: 9b0003117a340b3b71f82afdb88be54b.dir
+      size: 1327376917
       nfiles: 9
+    - path: params.yaml
+      hash: md5
+      md5: 9195a5b672f8ef2bcb13159502f9e8ad
+      size: 250
     - path: src/model_building.py
       hash: md5
       md5: adaddb8ad57b4a0ec5b502502c13220a
@@ -72,32 +80,29 @@ stages:
     outs:
     - path: models
       hash: md5
-      md5: 776e778ec8755e33de438f996cfbbd2f.dir
-      size: 269177568
+      md5: 15d13dc3399fd2d6da651a95e0437437.dir
+      size: 269177567
       nfiles: 2
   model_evaluation:
     cmd: python src/model_evaluation.py
     deps:
     - path: data/processed
       hash: md5
-      md5: d9ff2831efcb3de083ddcf8726c85b1a.dir
-      size: 1327376918
+      md5: 9b0003117a340b3b71f82afdb88be54b.dir
+      size: 1327376917
       nfiles: 9
     - path: models
       hash: md5
-      md5: 776e778ec8755e33de438f996cfbbd2f.dir
-      size: 269177568
+      md5: 15d13dc3399fd2d6da651a95e0437437.dir
+      size: 269177567
       nfiles: 2
     - path: src/model_training.py
       hash: md5
       md5: 6c27108bc73b123e77deb3c7f118e0bd
       size: 5648
-    params:
-      params.yaml:
-        model_evaluation.best: true
     outs:
     - path: reports
       hash: md5
-      md5: b755d7d9051e3ba493c24365acafe263.dir
+      md5: 8a94509b41ee61965702ad259762afff.dir
       size: 144
       nfiles: 1

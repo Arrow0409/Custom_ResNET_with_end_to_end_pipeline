@@ -5,6 +5,7 @@ import logging
 import tensorflow as tf
 import json
 import yaml
+from dvclive import Live
 
 logs_dir = "logs"
 os.makedirs(logs_dir, exist_ok=True)
@@ -157,16 +158,19 @@ def save_metrics(metrics: dict, file_path: str) ->None:
 def main() ->None:
     try:
         # Paths
-        params = load_params(config_path="params.yaml")['model_evaluation']
-        best = params["best"]
+        params = load_params(config_path="params.yaml")
+        #best = params["model_evaluation"]["best"]
         
         #best = True
 
+        model_path = "models/resnet18_best_model.keras"
+        """
         if best:
             model_path = "models/resnet18_best_model.keras"
         else:
             model_path = "models/resnet18_final_model.keras"
 
+        """
         test_dataset_path = "data/processed/test_dataset"
         
         # Load model and dataset
@@ -178,6 +182,17 @@ def main() ->None:
         
         # Calculate metrics
         metrics = calculate_metrics(true_labels, predicted_labels)
+
+        #Experiment tracking with DVC Live
+        with Live(save_dvc_exp=True) as live:
+            live_metrics = calculate_metrics(true_labels, predicted_labels)
+            live.log_metric("accuracy", live_metrics["accuracy"])
+            live.log_metric("precision", live_metrics["precision"])
+            live.log_metric("recall", live_metrics["recall"])
+            live.log_metric("f1_score", live_metrics["f1_score"])
+
+
+            live.log_params(params)
 
         save_metrics(metrics, file_path="reports/metrics.json")
     except Exception as e:

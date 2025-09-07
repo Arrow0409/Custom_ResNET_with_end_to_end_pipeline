@@ -13,5 +13,5 @@ model_training:
   epochs: 20
   learning_rate: 0.001
 
-model_evaluation:
-  best: True
+#model_evaluation:
+#  best: False"

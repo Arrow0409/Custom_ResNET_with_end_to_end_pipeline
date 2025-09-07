@@ -10,6 +10,7 @@ stages:
     deps:
     - src/Pre-processing.py
     - data/raw
+    - params.yaml
     params:
     - Pre-processing.batch_size
     - Pre-processing.shuffle
@@ -31,6 +32,7 @@ stages:
     - src/model_training.py
     - data/processed
     - src/model_building.py
+    - params.yaml
     params:
     - model_training.num_classes
     - model_training.epochs
@@ -43,7 +45,15 @@ stages:
     - src/model_training.py
     - data/processed
     - models
-    params:
-    - model_evaluation.best
+    #- params.yaml
+    #params:
+    #- model_evaluation.best
     outs:
     - reports
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step
+params:
+- dvclive/params.yaml
